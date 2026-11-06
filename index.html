@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CT Contrast Simulator</title>
+<link rel="stylesheet" href="src/style.css">
+</head>
+<body data-adv="0">
+<header class="top">
+  <h1 data-t="title"></h1>
+  <div class="topctl">
+    <div class="seg" id="langSeg"><button data-v="ja">日本語</button><button data-v="en">English</button></div>
+    <button class="icon" id="themeBtn">◐</button>
+    <button class="icon" id="aboutBtn">i</button>
+  </div>
+</header>
+<main>
+<!-- ================= サイドバー ================= -->
+<aside id="side">
+  <section class="sec">
+    <h2 data-t="region"></h2>
+    <div class="regions" id="regions" data-f="region"><button data-v="chest" data-t="regChest"></button><button data-v="abd" data-t="regAbd"></button><button data-v="pelvis" data-t="regPelvis"></button></div>
+  </section>
+
+  <section class="sec">
+    <h2 data-t="patient"></h2>
+    <div class="row adv"><label data-t="sex"></label><div class="seg" data-seg="sex"><button data-v="M" data-t="male"></button><button data-v="F" data-t="female"></button></div><span class="val"></span></div>
+    <div class="row adv"><label data-t="height"></label><input type="range" id="height" min="140" max="195" step="1"><span class="val" id="height_v"></span></div>
+    <div class="row" data-f="weight"><label data-t="weight"></label><input type="range" id="weight" min="35" max="140" step="1"><span class="val" id="weight_v"></span></div>
+    <div class="row adv"><label data-t="age"></label><input type="range" id="age" min="18" max="90" step="1"><span class="val" id="age_v"></span></div>
+    <div class="row adv"><label data-t="co"></label><div class="seg" data-seg="coMode"><button data-v="estimate" data-t="coEst"></button><button data-v="percent" data-t="coPct"></button><button data-v="absolute" data-t="coAbs"></button></div><span class="val"></span></div>
+    <div class="row adv" id="coPctRow"><label data-t="coPctLabel"></label><input type="range" id="coPct" min="30" max="160" step="5"><span class="val" id="coPct_v"></span></div>
+    <div class="row adv" id="coAbsRow"><label data-t="coAbsLabel"></label><input type="range" id="coAbs" min="1.5" max="10" step="0.1"><span class="val" id="coAbs_v"></span></div>
+    <div class="note adv"><span data-t="bv"></span> <b id="bv_v"></b> · <span data-t="co"></span> <b id="co_v2"></b></div>
+  </section>
+
+  <section class="sec">
+    <h2 data-t="contrast"></h2>
+    <div class="row" data-f="conc"><label data-t="conc"></label><select id="conc"><option>240</option><option>270</option><option>300</option><option>320</option><option>350</option><option>370</option><option>400</option></select><span class="val" data-t="concUnit"></span></div>
+    <div class="row adv"><label data-t="doseMode"></label><div class="seg" data-seg="doseMode"><button data-v="volume" data-t="byVolume"></button><button data-v="mgkg" data-t="byMgkg"></button></div><span class="val"></span></div>
+    <div class="row" id="volRow" data-f="volume"><label data-t="volume"></label><input type="range" id="volume" min="10" max="200" step="1"><span class="val" id="volume_v"></span></div>
+    <div class="row" id="mgkgRow" data-f="mgkg"><label data-t="mgkg"></label><input type="range" id="mgkg" min="100" max="900" step="10"><span class="val" id="mgkg_v"></span></div>
+    <div class="row adv"><label data-t="injMode"></label><div class="seg" data-seg="injMode"><button data-v="rate" data-t="byRate"></button><button data-v="duration" data-t="byDuration"></button></div><span class="val"></span></div>
+    <div class="row" id="rateRow" data-f="rate"><label data-t="rate"></label><input type="range" id="rate" min="0.5" max="8" step="0.1"><span class="val" id="rate_v"></span></div>
+    <div class="row" id="durRow"><label data-t="duration"></label><input type="range" id="duration" min="5" max="90" step="1"><span class="val" id="duration_v"></span></div>
+    <div class="row adv" data-f="biphasic"><label data-t="biphasic"></label><div class="seg" data-seg="biphasic"><button data-v="0" data-t="off"></button><button data-v="1" data-t="on"></button></div><span class="val"></span></div>
+    <div id="biRows">
+      <div class="row adv"><label data-t="rate2"></label><input type="range" id="rate2" min="0.3" max="8" step="0.1"><span class="val" id="rate2_v"></span></div>
+      <div class="row adv"><label data-t="frac2"></label><input type="range" id="frac2" min="10" max="90" step="5"><span class="val" id="frac2_v"></span></div>
+    </div>
+    <div class="row" data-f="saline"><label data-t="saline"></label><input type="range" id="saline" min="0" max="80" step="5"><span class="val" id="saline_v"></span></div>
+    <div class="note" id="injSummary"></div>
+  </section>
+
+  <section class="sec">
+    <h2 data-t="scan"></h2>
+    <div class="row" data-f="phasePreset"><label data-t="phase"></label><select id="phasePreset"></select><span class="val"></span></div>
+    <div class="row adv"><label data-t="timing"></label><div class="seg" data-seg="timing"><button data-v="fixed" data-t="fixed"></button><button data-v="bt" data-t="bt"></button></div><span class="val"></span></div>
+    <div class="row" id="delayRow" data-f="delay"><label data-t="delay"></label><input type="range" id="delay" min="0" max="300" step="1"><span class="val" id="delay_v"></span></div>
+    <div id="btRows">
+      <div class="row"><label data-t="btThr"></label><input type="range" id="btThr" min="50" max="250" step="10"><span class="val" id="btThr_v"></span></div>
+      <div class="row adv"><label data-t="btMon"></label><input type="range" id="btMon" min="3" max="30" step="1"><span class="val" id="btMon_v"></span></div>
+      <div class="row"><label data-t="btDiag"></label><input type="range" id="btDiag" min="2" max="60" step="1"><span class="val" id="btDiag_v"></span></div>
+    </div>
+    <div class="row adv"><label data-t="scanDur"></label><input type="range" id="scanDur" min="1" max="30" step="1"><span class="val" id="scanDur_v"></span></div>
+    <div class="row adv"><label data-t="huCoef"></label><input type="number" id="huCoef" step="0.5" min="5" max="80"><span class="val" data-t="editable"></span></div>
+  </section>
+
+  <section class="sec adv">
+    <h2 data-t="model"></h2>
+    <div class="row"><label data-t="psq"></label><select id="psq"><option>1</option><option>2</option><option>5</option><option>10</option><option>20</option><option value="Infinity" data-t="psInf"></option></select><span class="val"></span></div>
+    <div class="row"><label data-t="tEnd"></label><select id="tEnd"><option>180</option><option>300</option><option>600</option></select><span class="val">s</span></div>
+    <div class="note" data-t="modelNote"></div>
+  </section>
+
+  <div class="sidefoot">
+    <button class="btn" id="btnReset" data-t="reset"></button>
+    <label class="switch"><input type="checkbox" id="advToggle"><span class="track"></span><span class="lbl" data-t="advToggle"></span></label>
+  </div>
+</aside>
+
+<!-- ================= メイン ================= -->
+<section id="main">
+  <div class="panel">
+    <div class="panel-head"><h2 data-t="chartTitle"></h2><span class="note" id="refLabel"></span><button class="btn small" id="btnCompare"></button></div>
+    <div id="chartWrap"><canvas id="chart" height="380"></canvas><div id="tip"></div></div>
+    <div class="chips" id="chips"></div>
+  </div>
+
+  <div class="stats" id="cards"></div>
+
+  <div class="panel lesson" id="lesson">
+    <div class="lesson-head">
+      <span class="lesson-n"><span id="lessonN"></span><span class="tag" id="lessonTag"></span></span>
+      <div class="lesson-nav"><button class="btn small" id="btnPrev"></button><button class="btn small" id="btnNext"></button></div>
+    </div>
+    <h3 id="lessonT"></h3>
+    <p id="lessonP"></p>
+    <p class="point" id="lessonPoint"></p>
+    <div class="lesson-foot"><button class="btn primary" id="btnCompareShow"></button><span class="ref" id="lessonR"></span></div>
+  </div>
+
+  <div class="panel adv" id="detail">
+    <h2 data-t="detailTitle"></h2>
+    <div class="detail-grid"><table class="ro" id="peakTable"></table><table class="ro" id="scanTable"></table></div>
+    <div class="note" id="misc"></div>
+    <h3 data-t="opt"></h3>
+    <div class="opt">
+      <div class="row"><label data-t="optTarget"></label><select id="optTarget"></select><span class="val"></span></div>
+      <div class="row"><label data-t="optGoal"></label><input type="number" id="optHU" value="300" step="10"><span class="val">HU</span></div>
+      <div class="row"><label data-t="optVar"></label><div class="seg" data-seg="optVar"><button data-v="volume" data-t="optVol"></button><button data-v="volumeDur" data-t="optVolDur"></button></div><span class="val"></span></div>
+      <div class="row"><label></label><div><button class="btn" id="btnOpt" data-t="optRun"></button></div><span class="val"></span></div>
+    </div>
+    <div class="note" id="optOut"></div>
+    <div class="note" data-t="optNote"></div>
+  </div>
+
+  <div class="panel hidden" id="imagePanel">
+    <h2 data-t="imagePanel"></h2>
+    <div id="viewerHost"></div>
+  </div>
+</section>
+</main>
+<footer><span data-t="warn"></span></footer>
+
+<dialog id="aboutDlg">
+  <div class="dlg-head"><h2 data-t="aboutTitle"></h2><button class="icon" id="aboutClose">×</button></div>
+  <div class="about" id="modelInfo"></div>
+  <ol id="refs"></ol>
+  <p class="note" id="aboutImg"></p>
+</dialog>
+
+<script src="src/bae_model.js"></script>
+<script src="src/i18n.js"></script>
+<script src="src/viewer.js"></script>
+<script src="src/app.js"></script>
+</body>
+</html>

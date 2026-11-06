@@ -1,0 +1,8 @@
+.claude/
+.vscode/
+node_modules/
+*.log
+Thumbs.db
+.DS_Store
+Totalsegmentator_dataset_small_v201.zip
+notes/
